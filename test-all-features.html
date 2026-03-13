@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Features Test - Productivity Dashboard</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    body {
+      padding: 20px;
+    }
+    .test-info {
+      background: #e3f2fd;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border-left: 4px solid #2196f3;
+    }
+    body.dark-theme .test-info {
+      background: #1a237e;
+      border-left-color: #5ba3f5;
+    }
+    .test-info h2 {
+      margin: 0 0 10px 0;
+      color: #1976d2;
+    }
+    body.dark-theme .test-info h2 {
+      color: #5ba3f5;
+    }
+    .test-info ul {
+      margin: 10px 0 0 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="test-info">
+    <h2>🎯 All Features Test</h2>
+    <p><strong>New Features to Test:</strong></p>
+    <ul>
+      <li><strong>Name Prompt:</strong> On first load, you'll be asked for your name (blur effect on background)</li>
+      <li><strong>Personalized Greeting:</strong> Greeting will say "Good morning, [Your Name]"</li>
+      <li><strong>Date in Tasks Title:</strong> Tasks section title shows "Tasks - [Day, Date]"</li>
+      <li><strong>Dark/Light Mode Toggle:</strong> Click the sun/moon button in top-right corner</li>
+      <li><strong>Drag to Reorder:</strong> Drag tasks within quadrants to reorder them</li>
+      <li><strong>Completed Tasks:</strong> When you check a task, it jumps to the end of its quadrant</li>
+      <li><strong>Editable Timer:</strong> Click timer to edit duration (MM:SS format)</li>
+      <li><strong>Eisenhower Matrix:</strong> Drag tasks between quadrants to categorize</li>
+    </ul>
+    <p><strong>To reset and see name prompt again:</strong> Open browser console and run: <code>localStorage.clear()</code> then refresh</p>
+  </div>
+
+  <main class="dashboard">
+    <!-- Greeting Display Section -->
+    <section class="greeting-section" aria-label="Greeting and time display">
+      <div class="greeting-display">
+        <h1 class="greeting-message" id="greeting-message">Good morning</h1>
+        <time class="current-time" id="current-time">12:00 PM</time>
+      </div>
+    </section>
+
+    <div class="main-content">
+      <!-- Left Column: Timer and Quick Links -->
+      <div class="left-column">
+        <!-- Focus Timer Section -->
+        <section class="timer-section" aria-label="Focus timer">
+          <h2>Focus Timer</h2>
+          <div class="focus-timer">
+            <div class="timer-display" id="timer-display">25:00</div>
+            <div class="timer-controls">
+              <button type="button" class="btn btn-start" id="timer-start" aria-label="Start timer">▶️</button>
+              <button type="button" class="btn btn-stop" id="timer-stop" aria-label="Stop timer">⏸️</button>
+              <button type="button" class="btn btn-reset" id="timer-reset" aria-label="Reset timer">🔄</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Quick Links Section -->
+        <section class="links-section" aria-label="Quick links">
+          <div class="section-header">
+            <h2>Quick Links</h2>
+            <button type="button" class="btn btn-add-link" id="btn-add-link" aria-label="Add new link">+</button>
+          </div>
+          <div class="quick-links">
+            <div class="link-error" id="link-error" role="alert" aria-live="polite"></div>
+            <div class="link-items" id="link-items" role="list">
+              <!-- Links will be dynamically inserted here -->
+            </div>
+            <p class="empty-message" id="link-empty-message">No quick links yet. Click + to add one!</p>
+          </div>
+        </section>
+      </div>
+
+      <!-- Right Column: Tasks -->
+      <div class="right-column">
+        <section class="tasks-section" aria-label="Task list">
+          <h2>Tasks</h2>
+          <div class="task-list">
+            <form class="task-form" id="task-form">
+              <label for="task-input" class="visually-hidden">New task</label>
+              <input 
+                type="text" 
+                id="task-input" 
+                class="task-input" 
+                placeholder="Add a new task..."
+                aria-label="New task input"
+                maxlength="500"
+              >
+              <button type="submit" class="btn btn-add" aria-label="Add task">+</button>
+            </form>
+            <div class="task-error" id="task-error" role="alert" aria-live="polite"></div>
+            
+            <!-- New tasks staging area -->
+            <div class="new-tasks-area" id="new-tasks-area">
+              <ul class="task-items" id="task-items-new" role="list" data-quadrant="new">
+                <!-- New tasks appear here before being categorized -->
+              </ul>
+            </div>
+
+            <!-- Eisenhower Matrix -->
+            <div class="eisenhower-matrix">
+              <!-- Urgent & Important -->
+              <div class="matrix-quadrant urgent-important" data-quadrant="urgent-important">
+                <div class="quadrant-header">Urgent & Important</div>
+                <ul class="task-items" id="task-items-urgent-important" role="list" data-quadrant="urgent-important">
+                </ul>
+              </div>
+
+              <!-- Urgent & Unimportant -->
+              <div class="matrix-quadrant urgent-unimportant" data-quadrant="urgent-unimportant">
+                <div class="quadrant-header">Urgent & Unimportant</div>
+                <ul class="task-items" id="task-items-urgent-unimportant" role="list" data-quadrant="urgent-unimportant">
+                </ul>
+              </div>
+
+              <!-- Not Urgent & Important -->
+              <div class="matrix-quadrant not-urgent-important" data-quadrant="not-urgent-important">
+                <div class="quadrant-header">Not Urgent & Important</div>
+                <ul class="task-items" id="task-items-not-urgent-important" role="list" data-quadrant="not-urgent-important">
+                </ul>
+              </div>
+
+              <!-- Not Urgent & Unimportant -->
+              <div class="matrix-quadrant not-urgent-unimportant" data-quadrant="not-urgent-unimportant">
+                <div class="quadrant-header">Not Urgent & Unimportant</div>
+                <ul class="task-items" id="task-items-not-urgent-unimportant" role="list" data-quadrant="not-urgent-unimportant">
+                </ul>
+              </div>
+            </div>
+
+            <p class="empty-message" id="task-empty-message" style="display: none;">No tasks yet. Add one to get started!</p>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal for adding links -->
+  <div class="modal" id="link-modal" role="dialog" aria-labelledby="modal-title" aria-modal="true">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-title">Add Quick Link</h3>
+        <button type="button" class="btn-close" id="modal-close" aria-label="Close modal">&times;</button>
+      </div>
+      <form class="link-form" id="link-form">
+        <div class="link-form-group">
+          <label for="link-name-input">Link Name</label>
+          <input 
+            type="text" 
+            id="link-name-input" 
+            class="link-input" 
+            placeholder="e.g., GitHub"
+            aria-label="Link name input"
+            maxlength="100"
+          >
+        </div>
+        <div class="link-form-group">
+          <label for="link-url-input">URL</label>
+          <input 
+            type="url" 
+            id="link-url-input" 
+            class="link-input" 
+            placeholder="e.g., https://github.com"
+            aria-label="Link URL input"
+            maxlength="2000"
+          >
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-cancel" id="modal-cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary">Add Link</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
